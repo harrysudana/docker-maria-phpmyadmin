@@ -1,0 +1,31 @@
+version: '3'
+
+networks:
+  marianet:
+
+services:
+  db:
+    image: mariadb
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USER_NAME}
+      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
+    volumes:
+      - ${PWD}/mariadb:/var/lib/mysql
+      - ${PWD}/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+    ports:
+      - "3306:3306"
+    networks:
+      - marianet
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8806:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - marianet
+
